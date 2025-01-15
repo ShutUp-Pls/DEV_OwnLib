@@ -1,8 +1,4 @@
-import tkinter as tk
-
-from tkinter import ttk
-
-from .all_utils import TkTools
+from . import *
 
 class SearchBox(tk.Frame):
     PLACEHOLDER_SEARCH = "Buscar..."
