@@ -22,6 +22,6 @@ from .tk_menu import OwnSimpleListMenu
 # from .tk_dictionarygen import *
 
 from .dec_tk_exceptions import VerboseExceptionHandler, VerboseException
-from .dec_tk_progressscreen import ProgressScreenHandler #, ProgressScreen
+from .dec_tk_loadingbar import ProgressScreenHandler #, ProgressScreen
 
 BASE_DIR = os.path.dirname(__file__)
