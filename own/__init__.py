@@ -7,10 +7,12 @@ import traceback
 import json
 
 import tkinter as tk
-from tkinter import ttk, font, messagebox, Text, filedialog
+from tkinter import ttk, font, messagebox
+from PIL import ImageFont, ImageDraw
 
 from itertools import zip_longest
-from PIL import Image, ImageTk, ImageFont, ImageDraw
+from PIL import Image, ImageTk
+from tkinter import Text, filedialog
 
 from types import GeneratorType
 
