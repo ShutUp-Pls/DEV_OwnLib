@@ -1,6 +1,4 @@
 import os
-import traceback
-import threading
 import queue
 import traceback
 import threading
@@ -12,21 +10,14 @@ import tkinter as tk
 
 from tkinter import ttk, messagebox
 
-import tkinter as tk
-
 from tkinter import font
 from PIL import ImageFont, ImageDraw
 from itertools import zip_longest
 
-import tkinter as tk
-
-from tkinter import ttk
 from types import GeneratorType
 
-import tkinter as tk
-
 from PIL import Image, ImageTk
-from tkinter import ttk, Text, messagebox, filedialog
+from tkinter import Text, filedialog
 
 from .all_utils import TkTools, StrTools, ListTools, DictTools, OsTools, PillowTools, FormatTools, JsonTools
 
