@@ -1,16 +1,16 @@
-import os
-import json
-import queue
-import shutil
 import decimal
-import traceback
+import queue
+import os
 import threading
+import shutil
+import traceback
+import json
 
 import tkinter as tk
+from tkinter import ttk, font, messagebox, Text, filedialog
 
 from itertools import zip_longest
 from PIL import Image, ImageTk, ImageFont, ImageDraw
-from tkinter import ttk, font, messagebox, Text, filedialog
 
 from types import GeneratorType
 

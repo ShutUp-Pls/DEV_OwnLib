@@ -1,6 +1,4 @@
-import tkinter as tk
-
-from tkinter import ttk
+from . import *
 
 class OwnSimpleListMenu:
     def __init__(self, options_list:list):
