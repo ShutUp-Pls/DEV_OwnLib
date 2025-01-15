@@ -1,16 +1,6 @@
-import queue
-import traceback
-import threading
-import time
+from . import *
 
-import tkinter as tk
-
-from tkinter import ttk
-from types import GeneratorType
-
-from .dec_tk_exceptions import VerboseException
-
-class OwnLoadingBar:
+class ProgressScreenHandler:
     local_thread = threading.local()
 
     def __init__(self, func):
@@ -106,7 +96,7 @@ class ProgressScreen(tk.Toplevel):
 
         self.title(title)
         self.geometry("400x150")
-        if icon_app: self.iconphoto(False, tk.PhotoImage(file=icon_app))
+        self.iconphoto(False, tk.PhotoImage(file=os.path.join(BASE_DIR, "src", "loading_icon.png")))
         self.resizable(False, False)
 
         self.do_check = True
@@ -147,20 +137,23 @@ class ProgressScreen(tk.Toplevel):
 
         self.update_idletasks()
 
-        if self.float_var.get() == 100: self.close()
+        if self.float_var.get() == 100: self.__close()
 
-    def close(self):
+    def __show_preferences(self, grab_set=None, wait_window=None):
+        if grab_set:
+            try: self.grab_set()
+            except: pass
+        if wait_window: self.wait_window()
+        self.attributes("-topmost", True)
+
+    def __close(self):
         self.do_check = False
         self.grab_release()
         if self.own_root: self.main_root.destroy()
-        self.destroy()
+        else: self.destroy()
 
     @staticmethod
-    def show(title=None, optional=None, master=None, icon_path=None):
+    def show(title=None, optional=None, master=None, icon_path=None, grab_set=None, wait_window=None):
         window = ProgressScreen(master=master, title=title, optional=optional, icon_app=icon_path)
-        try: window.grab_set()
-        except: pass
-        window.update()
-        window.update_idletasks()
-        window.attributes("-topmost", True)
+        window.__show_preferences(grab_set=grab_set, wait_window=wait_window)
         return window

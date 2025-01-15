@@ -1,12 +1,4 @@
-import traceback
-import threading
-
-import tkinter as tk
-
-from PIL import Image, ImageTk
-from tkinter import ttk, Text, messagebox, filedialog
-
-from .all_utils import StrTools, TkTools
+from . import *
 
 class VerboseExceptionHandler:
     local_thread = threading.local()
@@ -64,14 +56,16 @@ class VerboseException(tk.Toplevel):
         # ===========================================================
 
         if type_dialog == "error":
-            icon_path = "src\\error_icon.png"
+            icon_path = os.path.join(BASE_DIR, "src", "error_icon.png")
             if not title: self.title_str = "Error:"
 
         elif type_dialog == "info":
-            icon_path = "src\\info_icon.png"
+            icon_path = os.path.join(BASE_DIR, "src", "info_icon.png")
             if not title: self.title_str = "Información:"
 
-        else: icon_path = "src\\info_icon.png"
+        else:
+            icon_path = os.path.join(BASE_DIR, "src", "info_icon.png")
+            if not title: self.title_str = "Información:"
 
         self.iconphoto(False, tk.PhotoImage(file=icon_path))
 
@@ -127,6 +121,10 @@ class VerboseException(tk.Toplevel):
         self.details_text = Text(self.bottom_frame, wrap=tk.WORD, state=tk.DISABLED)
         size = TkTools.calculate_text_width(self.details_text, self.top_frame.winfo_reqwidth())
         self.details_text.configure(height=int((size*10)/80), width=size)
+        self.details_text.config(state=tk.NORMAL)
+        self.details_text.delete("1.0", tk.END)
+        self.details_text.insert("1.0", self.ext_log)
+        self.details_text.config(state=tk.DISABLED)
         self.save_button = ttk.Button(self.bottom_frame,text="Guardar como...", command=self.__save_log)
 
         self.bottom_frame.pack()
@@ -163,10 +161,6 @@ class VerboseException(tk.Toplevel):
             self.more_button.config(text="Ver detalles")
             self.geometry(self.close_geometry)
         else:
-            self.details_text.config(state=tk.NORMAL)
-            self.details_text.delete("1.0", tk.END)
-            self.details_text.insert("1.0", self.ext_log)
-            self.details_text.config(state=tk.DISABLED)
             self.more_button.config(text="Ocultar detalles")
             self.geometry(self.open_geometry)
 
@@ -182,23 +176,26 @@ class VerboseException(tk.Toplevel):
 
             except Exception as error: messagebox.showerror("Error", f"No se pudo guardar el log:\n{error}")
 
-    def __show(self, grab_set=None, wait_window=None):
+    def __show_preferences(self, grab_set=None, wait_window=None):
         if grab_set:
             try: self.grab_set()
             except: pass
         if wait_window: self.wait_window()
+        self.attributes("-topmost", True)
 
     def __close_window(self):
         self.grab_release()
         if self.own_root: self.main_root.destroy()
-        self.destroy()
+        else: self.destroy()
 
     @staticmethod
     def show_error(min_log=None, ext_log=None, title=None, master=None, grab_set=None, wait_window=None):
         window = VerboseException(master=master, title=title, min_log=min_log, ext_log=ext_log, type_dialog="error")
-        window.__show(grab_set=grab_set)
+        window.__show_preferences(grab_set=grab_set, wait_window=wait_window)
+        return window
 
     @staticmethod
     def show_info(min_log=None, ext_log=None, title=None, master=None, grab_set=None, wait_window=None):
         window = VerboseException(master=master, title=title, min_log=min_log, ext_log=ext_log, type_dialog="info")
-        window.__show(grab_set=grab_set)
+        window.__show_preferences(grab_set=grab_set, wait_window=wait_window)
+        return window

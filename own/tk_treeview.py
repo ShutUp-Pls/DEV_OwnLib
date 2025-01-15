@@ -88,36 +88,33 @@ class TreeviewBase(ttk.Treeview):
         return {iid: self.item(iid, option="values") for iid in iids}
     
     @visible_rows.setter
-    def visible_rows(self, rows:list):
+    def visible_rows(self, rows: list):
+        self.__set_visible_rows(rows, as_generator=False)
+
+    def visible_rows_yielded(self, rows: list):
+        yield from self.__set_visible_rows(rows, as_generator=True)
+
+    def __set_visible_rows(self, rows: list, as_generator: bool):
         if rows:
             if self.__filtered_rows: rows = ListTools.common(rows, self.__filtered_rows)
             else: rows = ListTools.common(rows, self.__available_rows)
+
             self.delete(*self.get_children())
 
             total = len(rows)
-            if self.callback_insert: 
+            if as_generator:
                 for idx, row in enumerate(rows):
-                    self.callback_insert(idx, total, f"Insertando fila {idx} de {total}...")
+                    yield (total, f"Insertando fila {idx + 1} de {total}...")
                     self.insert("", tk.END, values=tuple(row))
-
             else:
-                for row in rows: self.insert("", tk.END, values=tuple(row))
+                if self.callback_insert:
+                    for idx, row in enumerate(rows):
+                        self.callback_insert(idx, total, f"Insertando fila {idx + 1} de {total}...")
+                        self.insert("", tk.END, values=tuple(row))
+                else:
+                    for row in rows: self.insert("", tk.END, values=tuple(row))
             self.__order_data()
-
-        else: self.delete(*self.get_children())
-
-    def visible_rows_yielded(self, rows:list):
-        if rows:
-            if self.__filtered_rows: rows = ListTools.common(rows, self.__filtered_rows)
-            else: rows = ListTools.common(rows, self.__available_rows)
-            self.delete(*self.get_children())
-
-            total = len(rows)
-            for idx, row in enumerate(rows):
-                yield(total, f"Insertando fila {idx} de {total}...")
-                self.insert("", tk.END, values=tuple(row))
-            self.__order_data()
-
+            
         else: self.delete(*self.get_children())
 
     @property
@@ -143,32 +140,24 @@ class TreeviewBase(ttk.Treeview):
         if order in self.order_dips_lst and self.__order_column: self.__order_type = order
         else: self.__order_type = "def"
 
-    def set_load_treeview(self, rows:list=None, columns:list=None, avaible_columns:list=None, avaible_rows:list=None, visible_columns:list=None, visible_rows:list=None):
-        rows = rows if rows else self.loaded_rows
-        columns = columns if columns else self.loaded_columns
-
-        self.loaded_columns = columns
-        self.available_columns = self.loaded_columns if avaible_columns is None else avaible_columns
-        self.visible_columns = self.available_columns if visible_columns is None else visible_columns
-
-        self.loaded_rows = rows
-        self.available_rows = self.loaded_rows if avaible_rows is None else avaible_rows
-        self.visible_rows = self.available_rows if visible_rows is None else visible_rows
-
-    def set_load_treeview_yielded(self, rows:list=None, columns:list=None, avaible_columns:list=None, avaible_rows:list=None, visible_columns:list=None, visible_rows:list=None):
+    def set_load_treeview(self, rows=None, columns=None, avaible_columns=None, avaible_rows=None, visible_columns=None, visible_rows=None, as_generator=False):
         STEP_COUNT = 1
-        
+
         rows = rows if rows else self.loaded_rows
         columns = columns if columns else self.loaded_columns
 
         self.loaded_columns = columns
         self.available_columns = self.loaded_columns if avaible_columns is None else avaible_columns
         self.visible_columns = self.available_columns if visible_columns is None else visible_columns
-        yield(STEP_COUNT, "Carga Columnas Completa")
+
+        if as_generator: yield (STEP_COUNT, "Carga Columnas Completa")
 
         self.loaded_rows = rows
         self.available_rows = self.loaded_rows if avaible_rows is None else avaible_rows
-        yield(STEP_COUNT, self.visible_rows_yielded(self.available_rows))
+
+        if as_generator: yield (STEP_COUNT, self.visible_rows_yielded(self.available_rows))
+        else: self.visible_rows = self.available_rows if visible_rows is None else visible_rows
+
 
     def set_avaible_treeview(self, rows:list=None, columns:list=None, visible_columns:list=None, visible_rows:list=None):
         rows = rows if rows else self.available_rows
