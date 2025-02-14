@@ -1,12 +1,4 @@
-import os
-import shutil
-import json
-
-import tkinter as tk
-
-from tkinter import font
-from PIL import ImageFont, ImageDraw
-from itertools import zip_longest
+from . import tk, font, ImageFont, ImageDraw, os, shutil, json, zip_longest, time
 
 class TkTools:
     class GrabManager:
@@ -35,6 +27,39 @@ class TkTools:
         widget_font = font.Font(font=widget['font'])
         avg_char_width = widget_font.measure("M")
         return container_width // avg_char_width
+
+    @staticmethod
+    def grid_label_widget_nsew(label:tk.Label, widget:tk.Widget, current_row:int, current_column:int, label_pos:str):
+        row_count = current_row
+        column_count = current_column
+        if label is None:
+            widget.grid(row=row_count, column=column_count, columnspan=2, sticky="we", padx=5, pady=5)
+        
+        else:
+            if label_pos == 'w':
+                label.grid(row=row_count, column=column_count, sticky="e", padx=5, pady=5)
+                column_count += 1
+                widget.grid(row=row_count, column=column_count, sticky="we", padx=5, pady=5)
+            
+            elif label_pos == 'e':
+                widget.grid(row=row_count, column=column_count, sticky="we", padx=5, pady=5)
+                column_count += 1
+                label.grid(row=row_count, column=column_count, sticky="w", padx=5, pady=5)
+            
+            elif label_pos == 'n':
+                label.grid(row=row_count, column=column_count, columnspan=2, sticky="we", padx=5, pady=5)
+                row_count += 1
+                widget.grid(row=row_count, column=column_count, columnspan=2, sticky="we", padx=5, pady=5)
+            
+            elif label_pos == 's':
+                widget.grid(row=row_count, column=column_count, columnspan=2, sticky="we", padx=5, pady=5)
+                row_count += 1
+                label.grid(row=row_count, column=column_count, columnspan=2, sticky="we", padx=5, pady=5)
+
+            else:
+                label.grid(row=row_count, column=column_count, columnspan=2, sticky="we", padx=5, pady=5)
+                row_count += 1
+                widget.grid(row=row_count, column=column_count, columnspan=2, sticky="we", padx=5, pady=5)
     
 class StrTools:
 
@@ -217,3 +242,56 @@ class DictTools:
     def common_filter_list(source_dict: dict, filter_list: list):
         filter_set = set(filter_list)
         return {key: value for key, value in source_dict.items() if key in filter_set}
+
+class Crono:
+    def __init__(self, verbose:bool=True):
+        self.__verbose = True
+        self.verbose = verbose
+
+        self.__checkpoints = []
+        self.checkpoints = time.time()
+
+        if self.verbose:
+            print(f"[Checkpoint 0 -> {self.checkpoints[0]}] (Total Registrados: {len(self.checkpoints)})")
+            print(f"Total_time: {0:.6f}, Checkpoint_0.0_time: {0:.6f}")
+
+    @property
+    def checkpoints(self):
+        return self.__checkpoints
+    
+    @checkpoints.setter
+    def checkpoints(self, value:float|int):
+        if not isinstance(value, (float,int)): raise ValueError(f"Valor ingresado '{value}' no es un número. Se esperaba un número (int o float) para 'checkpoints'.")
+        self.__checkpoints.append(value)
+
+    @property
+    def verbose(self):
+        return self.__verbose
+
+    @verbose.setter
+    def verbose(self, value: bool):
+        if not isinstance(value, bool): raise ValueError("'verbose' debe ser un valor booleano True|False")
+        self.__verbose = value
+
+    def checkpoint(self, from_checkpoint:int=None, verbose:bool=None):
+        if self.checkpoints: num_checkpoints = len(self.checkpoints)
+        else: raise AttributeError("El atributo 'checkpoints' no ha sido definido")
+
+        if from_checkpoint is None: from_checkpoint = num_checkpoints-1
+        elif not isinstance(from_checkpoint, int): raise ValueError("'from_checkpoint' debe ser un valor Entero")
+
+        if verbose is None: verbose = self.verbose
+        elif not isinstance(verbose, bool): raise ValueError("'verbose' debe ser un valor booleano True|False")
+
+        current_time = time.time()
+
+        total_time = current_time - self.checkpoints[0]
+        partial_time = current_time - self.checkpoints[from_checkpoint]
+        self.checkpoints = current_time
+
+        if verbose:
+            print(f"[Checkpoint {num_checkpoints} -> {current_time}] (Total Registrados: {len(self.checkpoints)})")
+            print(f"Total_time: {total_time:.6f}, Checkpoint_{from_checkpoint}.{num_checkpoints}_time: {partial_time:.6f}")
+
+    def sleep(self, seconds):
+        time.sleep(seconds)
