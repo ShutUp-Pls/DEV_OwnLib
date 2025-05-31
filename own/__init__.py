@@ -25,4 +25,6 @@ from typing import Any, Literal
 
 from .own_utils import TkTools, StrTools, ListTools, DictTools, OsTools, PillowTools, FormatTools, JsonTools, Crono
 
+from .tk_treeview import OwnTreeview
+
 BASE_DIR = os.path.dirname(__file__)
