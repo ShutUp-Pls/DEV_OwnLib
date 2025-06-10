@@ -3,19 +3,22 @@
 ### IMPORTACIONES DE LIBRERIAS USADAS POR EL MODULO
 import tkinter as tk
 
+from typing import Callable, Union
 from tkinter import filedialog, messagebox
-from typing import Callable, Literal
 
+from .tk_tk import Tk
 from .tools_tk import Tools
-from .tk_button import Button
 from .tk_entry import Entry
 from .tk_frame import Frame
 from .tk_label import Label
+from .tk_button import Button
+from .tk_cascade import Cascade
+from .tk_textframe import TextFrame
+from .tk_dropdownmenu import DropdownMenu
 from .tk_labeledframe import FrameLabel
 from .tk_scrollableframe import ScrollableFrame
-from .tk_textframe import TextFrame
-from .tk_tk import Tk
-from .tk_widget import Widget
+
+Widget = Union[Button, Cascade, Frame, Entry, Label, TextFrame, ScrollableFrame, DropdownMenu, FrameLabel]
 
 # Puntos Cardinales
 W = tk.W
