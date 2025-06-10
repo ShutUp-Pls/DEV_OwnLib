@@ -1,21 +1,14 @@
 ### CONSTRUCTOR DEL MODULO ###
 
 ### IMPORTACIONES DE LIBRERIAS USADAS POR EL MODULO
+import psycopg2
+
 import tkinter as tk
 
 from tkinter import filedialog, messagebox
 from typing import Callable, Literal
 
-from .tools_tk import Tools
-from .tk_button import Button
-from .tk_entry import Entry
-from .tk_frame import Frame
-from .tk_label import Label
-from .tk_labeledframe import FrameLabel
-from .tk_scrollableframe import ScrollableFrame
-from .tk_textframe import TextFrame
-from .tk_tk import Tk
-from .tk_widget import Widget
+from .psy_conection import
 
 # Puntos Cardinales
 W = tk.W
