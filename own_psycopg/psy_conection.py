@@ -5,20 +5,43 @@ from psycopg2.extensions import cursor, connection
 OBTENER_DBS = "SELECT datname FROM pg_database WHERE datistemplate = false;"
 OBTENER_TBS = "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public';"
 
-class Conexion:
+MSG_ERR_DBT = "La database solo puede ser seleccionada como 'str'."
+MSG_ERR_DBE = "No hay bases de datos disponibles."
 
+MSG_ERR_DBC = "No se pudo conectar a la base de datos."
+MSG_ERR_DBC = "No hay bases de datos disponibles."
+
+class ErrorDBType(Exception):
     def __init__(self, *args, **kwargs):
+        '''Error: DataBase no es un 'str'.'''
+        super().__init__(MSG_ERR_DBT, *args, **kwargs)
+
+class ErrorDBEmpty(Exception):
+    def __init__(self, *args, **kwargs):
+        '''Error: No hay DataBases disponibles.'''
+        super().__init__(MSG_ERR_DBE, *args, **kwargs)
+
+class ErrorConectionDB(Exception):
+    def __init__(self, *args, **kwargs):
+        '''Error: Al intentar conectarse.'''
+        super().__init__(MSG_ERR_DBE, *args, **kwargs)
+
+class PgConnect:
+    def __init__(self, *args, **kwargs):
+        '''Clase que maneja la conexión con postgres.'''
+        self.__verbose:tuple[bool,bool] = (True, False)
         self.__cursor:cursor = None
         self.__conexion:connection = None
-        self.__verbose:tuple[bool,bool] = (True, False)
         self.__databases:list[str] = []
         self.__database:str = ""
         self.__tablas:list[str] = []
+        self.__tabla:str = ""
 
-        super().__init__(*args, **kwargs)
+    ### ========= ### ========= ###
 
     @property
     def verbose(self):
+        '''Identifica si el feedback de ejecución se dá a través de consola o interfaz gráfica con tkinter.'''
         return self.__verbose
     
     @verbose.setter
@@ -28,37 +51,64 @@ class Conexion:
         
         self.__verbose = verb
 
+    ### ========= ### ========= ###
+
     @property
     def conexion(self):
+        ''''''
         return self.__conexion
     
     @conexion.setter
     def conexion(self, con:dict[str,str]):
-        self.conectarse(**con)
+        try: self.__conexion = self.conectarse(**con)
+        except Exception as e:  pass
+
+    ### ========= ### ========= ###
     
     @property
     def cursor(self):
         return self.__cursor
     
+    ### ========= ### ========= ###
+    
     @property
     def databases(self):
         return self.__databases
+    
+    ### ========= ### ========= ###
     
     @property
     def database(self):
         return self.__database
     
     @database.setter
-    def database(self, db:str):
-        if not self.__databases: raise Exception("No hay bases de datos dispobibles.")
+    def database(self, db:str|int):
+        if not isinstance(db, (str, int)): raise ErrorDBType()
+        if not self.__databases: raise Exception()
         if not db in self.__databases: raise Exception(f"Base de datos no disponible\nBase de datos seleccionada:{db}\nBases de datos disponibles:{self.__databases}")
 
-        self.__database = db
+        if isinstance(db, int): self.__database = self.__databases[db]
+        else: self.__database = db
+
         self.refrescar_tablas()
+
+    ### ========= ### ========= ###
 
     @property
     def tablas(self):
         return self.__tablas
+    
+    ### ========= ### ========= ###
+    
+    @property
+    def tabla(self):
+        return self.__tabla
+    
+    @tabla.setter
+    def tabla(self, tbl:str):
+        self.__tabla = tbl
+
+    ### ========= ### ========= ###
     
     def conectarse(self, **kwargs):
         try:
@@ -117,7 +167,7 @@ class Conexion:
 
         self.refrescar_cursor()
         self.cursor.execute(OBTENER_DBS)
-        databases:list[str] = [db for db in self.cursor.fetchall()]
+        databases:list[str] = [db for db in self.cursor.fetchall()[0]]
         self.refrescar_cursor()
 
         self.__databases = databases

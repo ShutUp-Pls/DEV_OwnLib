@@ -1,6 +1,4 @@
-### CONSTRUCTOR DEL MODULO ###
-
-### IMPORTACIONES DE LIBRERIAS USADAS POR EL MODULO
+'''Clase envoltura y personalizada de la librería 'tkinter'.'''
 import tkinter as tk
 
 from typing import Callable, Union

@@ -3,6 +3,7 @@ from . import tk, Callable
 class FrameLabel(tk.LabelFrame):
 
     def __init__(self, master:tk.Tk|tk.Toplevel|tk.Frame|tk.Canvas=None, **kwargs):
+        '''tk.LabelFrame - Widget funciona como Frame pero enmarcado y con texto de titulo.'''
         self.__exe_al_escribir:Callable = None
         super().__init__(master, **kwargs)
 

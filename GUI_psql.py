@@ -1,5 +1,3 @@
-import psycopg2
-
 import own_tk as own
 import own_psycopg as own_pg
 
@@ -11,11 +9,11 @@ BTN_DESCON = "Desconectarse"
 class GUIpsql(own.Tk):
 
     def __init__(self, *args, **kwargs):
-        self.__conexion = own_pg.Conexion()
+        self.__conexion = own_pg.PgConnect()
         self.__conexion.verbose = (False, True)
 
         super().__init__(*args, **kwargs)
-        own.Tools.configurar_pesos(self, [0, 0], [1, 0])
+        own.Tools.configurar_pesos(self, [1, 1], [1, 0])
 
         self.visualizacion = own.ScrollableFrame(self)
         self.visualizacion.grid(row=0, column=0, sticky=own.NSEW, rowspan=2)
@@ -119,7 +117,7 @@ class GUIpsql(own.Tk):
 
 
 programa = GUIpsql()
-programa.title("CRUD V1.0 - Alpha (Only Graphics)")
+programa.title("CRUD (Solo Gráficos)")
 own.Tools.configurar_pesos(programa, [1], [1])
 
 programa.mainloop()
