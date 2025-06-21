@@ -1,11 +1,12 @@
-from . import Callable, Frame, Tk, Widget
+from . import tk
 
-class FrameAutoGrid(Frame):
+class FrameAutoGrid(tk.Frame):
 
-    def __init__(self, master:Tk|Frame = None, posiciones:dict[Widget,list[tuple[int,int]]] = None, **kwargs):
+    def __init__(self, master:tk.Tk|tk.Toplevel|tk.Frame|tk.Canvas = None, posiciones:dict[tk.Widget,list[tuple[int,int]]] = None, **kwargs):
+        '''tk.Frame en el que puedes posicionar multiples Widgets rapidamente a través de un estructura de la forma 'dict[tk.Widget,list[tuple[int,int]]]'.'''
         if not posiciones or not isinstance(posiciones, dict): raise ValueError("El parámetro 'posiciones' debe ser un diccionario no vacío.")
 
-        self.__widgets:dict[tuple[int,int],Widget] = {}
+        self.__widgets:dict[tuple[int,int],tk.Widget] = {}
 
         super().__init__(master, **kwargs)
 

@@ -1,5 +1,5 @@
 import own_tk
-from own_tk.own_frameautogrid import EntryButton
+from own_tk.tk_frameautogrid import EntryButton
 
 from bs4 import BeautifulSoup
 

@@ -1,126 +1,49 @@
-from . import MutableMapping, ttk
+from . import tk, ttk, Tools
 
-class OwnTreeview(MutableMapping):
+class Treeview(tk.Frame):
     def __init__(self, master, **kwargs):
-        self.__tree = ttk.Treeview(master=master, **kwargs)
-        self.__columns = ()
-        self.__data = {}
-        self.__allow_overwrite = False
+        super().__init__(master)
+        Tools.configurar_pesos(self, [1, 0], [1, 0])
 
-        self.def_tag = "Col"
+        # Canvas para permitir scroll horizontal real
+        self.canvas = tk.Canvas(self)
+        self.tree = ttk.Treeview(self.canvas, **kwargs)
 
-    @property
-    def allow_overwrite(self):
-        return self.__allow_overwrite
-    
-    @allow_overwrite.setter
-    def allow_overwrite(self, value:bool):
-        if not isinstance(value, bool): raise ValueError(f"Permitir el sobre escribir nuevos valores debe ser booleano.\n[Valor Intentado]: {value}\n[Valor Tipo]: {type(value)}")
+        self.v_scroll = tk.Scrollbar(self, orient="vertical", command=self.tree.yview)
+        self.h_scroll = tk.Scrollbar(self, orient="horizontal", command=self.canvas.xview)
 
-        self.__allow_overwrite = value
+        self.tree.configure(yscrollcommand=self.v_scroll.set)
+        self.canvas.configure(xscrollcommand=self.h_scroll.set)
 
-    @property
-    def columns(self):
-        return self.__columns
+        # Embed el tree en el canvas
+        self.tree_id = self.canvas.create_window((0, 0), window=self.tree, anchor='nw')
 
-    @columns.setter
-    def columns(self, value:tuple|int):
-        ### VALIDACIONES
-        # Si se quiere setear un diccionario completo se han de cumplir ciertas condiciones.
-        if not isinstance(value, (int,tuple)): raise ValueError(f"Columnas deben ser Tupla o Entero.\n[Valor Intentado]: {value}\n[Valor Tipo]: {type(value)}")
+        # Bind para ajustar scroll horizontal cuando cambie el contenido
+        self.tree.bind('<Configure>', lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+        self.canvas.bind("<Configure>", self._ajustar_treeview)
 
-        ### DEFINICION
-        # Si se cumplen todas las validaciones.
-        self.__columns = value if isinstance(value, tuple) else tuple(f"{self.def_tag}_{i}" for i in range(1, value + 1))
-        self.__data = {}
+        # Layout
+        self.canvas.grid(row=0, column=0, sticky=tk.NSEW)
+        self.v_scroll.grid(row=0, column=1, sticky=tk.NS)
+        self.h_scroll.grid(row=1, column=0, sticky=tk.EW)
 
-        self.__tree["columns"] = self.__columns
-        self.__tree.delete(*self.__tree.get_children())
-        for col in self.__columns:
-            self.__tree.heading(col, text=col)
-            self.__tree.column(col, width=100)        
+    def _ajustar_treeview(self, event:tk.Event):
+        canvas_width = event.width
+        canvas_height = event.height
+        self.canvas.itemconfigure(self.tree_id, width=canvas_width, height=canvas_height)
 
-    @property
-    def data(self):
-        return self.__data
-    
-    @data.setter
-    def data(self, data_dict:dict):
-        ### VALIDACIONES
-        # Si se quiere setear un diccionario completo se han de cumplir ciertas condiciones.
-        lens = {len(v) for v in data_dict.values()}
-        valid_len = (len(lens) == 1)
-        if not valid_len: raise ValueError(f"Hay filas que difieren en tamaño.\n[Tamaños de Fila]: {lens}")
+    # Métodos delegados
+    def definir_columnas(self, cols, anchos=None):
+        self.tree["columns"] = cols
+        self.tree["show"] = "headings"
+        for i, c in enumerate(cols):
+            w = anchos[i] if anchos and i < len(anchos) else 100
+            self.tree.heading(c, text=c)
+            self.tree.column(c, width=w)
 
-        lens = next(iter(lens))
-        valid_len = (lens == len(self.__columns))
-        if not valid_len: raise ValueError(f"El largo de las filas no coincide con el requerido.\n[Tamaños de Fila]: {lens}\n[Tamaño de Fila Requerido]: {len(self.__columns)}")
+    def definir_filas(self, filas):
+        for f in filas: self.tree.insert('', tk.END, values=f)
 
-        for k in data_dict:
-            if not isinstance(k, str): raise ValueError(f"Un iid no es una entrada valida.\n[iid value]: {k}\n[iid tipo]: {type(k)}")
-
-        ### DEFINICION
-        # Si se cumplen todas las validaciones.
-        self.__data = data_dict
-        self.__tree.delete(*self.__tree.get_children())
-        for iid, values in data_dict.items(): self.__tree.insert("", "end", iid=iid, values=values)
-
-    def __getitem__(self, key:str):
-        return self.__data[key]
-
-    def __setitem__(self, key:str, value:tuple):
-        ### VALIDACIONES
-        # Si se quiere agregar una fila esta debe cumplir con ciertas cosas.
-        if not isinstance(key, str): raise ValueError(f"El 'iid' solo puede ser una cadena de texto.\n[iid]: {key}\n[iid Type]: {type(key)}")
-        if not isinstance(value, tuple): raise ValueError(f"La fila del 'iid' deben estar definidas en tupla.\n[Fila]: {value}\n[Fila Type]: {type(value)}")
-        if len(value) != len(self.__columns): raise ValueError(f"La fila ingresada no cumple el N°columnas requeridas.\n[Fila]: {value}\n[Columnas Requeridas]: {len(self.__columns)}") 
-
-        ### DEFINICION
-        # Si se cumplen todas las validaciones.
-        key_in_data = (key in self.__data)
-        if key_in_data :
-            if self.__allow_overwrite:
-                self.__data[key] = value
-                self.__tree.delete(key)
-                self.__tree.insert("", "end", iid=key, values=value)
-        else:
-            self.__data[key] = value
-            self.__tree.insert("", "end", iid=key, values=value)
-        
-        self.__tree.update_idletasks()
-
-    def __delitem__(self, key):
-        if key in self.__data:
-            del self.__data[key]
-            self.__tree.delete(key)
-            self.__tree.update_idletasks()
-
-    def __iter__(self):
-        return iter(self.__data)
-
-    def __len__(self):
-        return len(self.__data)
-
-    def __repr__(self):
-        return self.__data
-    
-    def __str__(self):
-        return self.__data
-    
-    ### MÉTODOS COMÚNES
-    # Métodos que afectan al Treeview y sus estructuras de datos.
-    def selection_del(self, **kwargs):
-        selected_iids = self.__tree.selection(**kwargs)
-        if selected_iids:
-            for iid in selected_iids: self.__delitem__(iid)
-    
-    ### MÉTODOS OVERLOAD
-    # Métodos Treeview
-    def selection(self, **kwargs):
-        return self.__tree.selection(**kwargs)
-    
-    def pack(self,**kwargs):
-        self.__tree.pack(**kwargs)
-
-    ### MÉTODOS OVERLOAD
-    # Métodos de las estructuras
+    def limpiar(self):
+        for item in self.tree.get_children(): self.tree.delete(item)
+        self.tree["columns"] = []
