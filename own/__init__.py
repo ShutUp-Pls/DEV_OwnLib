@@ -12,6 +12,7 @@ from .tk_frame import Frame
 from .tk_label import Label
 from .tk_button import Button
 from .tk_cascade import Cascade
+from .tk_notebook import Notebook
 from .tk_treeview import Treeview
 from .tk_textframe import TextFrame
 from .tk_menubutton import Menubutton
@@ -39,6 +40,7 @@ NORMAL = tk.NORMAL
 CENTER = tk.CENTER
 DISABLED = tk.DISABLED
 
+# Valores por defecto
 DEF_HOST = "localhost"
 DEF_PORT = "5432"
 DEF_DBNAME = ""
