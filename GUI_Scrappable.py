@@ -1,5 +1,7 @@
 import own, requests
 
+#cambio
+
 from own.own_entrybutton import EntryButton
 
 class GUIScrapHTML(own.Tk):
