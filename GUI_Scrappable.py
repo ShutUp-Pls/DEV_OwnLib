@@ -1,6 +1,6 @@
 import own, requests
 
-#cambio
+#cambio segundo
 
 from own.own_entrybutton import EntryButton
 
