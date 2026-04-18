@@ -13,7 +13,7 @@ Esta librería es una colección de componentes personalizados para el framework
 ## Estructura del Proyecto
 ```text
 DEV_OwnLib/
-├── own_tk/                 # Paquete principal
+├── ownTk/                 # Paquete principal
 │   ├── __init__.py         
 │   ├── widget_1.py         # Widget y funcionalidades
 │   ├── widget_2.py
