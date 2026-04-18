@@ -43,7 +43,7 @@ A continuación se muestra cómo integrar un widget de esta librería en una apl
 ```python
 import ownTk as own
 
-class Aplicacion(tk.Tk):
+class Aplicacion(own.Tk):
     def __init__(self):
         super().__init__()
         self.title("Proyecto Principal")
