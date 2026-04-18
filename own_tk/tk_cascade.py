@@ -1,5 +1,3 @@
-from . import tk
-
 import tkinter as tk
 
 class Cascade(tk.Frame):

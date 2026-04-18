@@ -1,1 +1,8 @@
-__pycache__
+# Residuo de ejecución
+__pycache__/
+
+# Entorno
+.venv/
+
+# No lo recuerdo
+pagina.html

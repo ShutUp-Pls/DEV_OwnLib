@@ -1,4 +1,6 @@
-from . import tk, ttk, Tools
+import tkinter as tk
+from tkinter import ttk
+from .tools_tk import Tools
 
 class Treeview(tk.Frame):
     def __init__(self, master, **kwargs):

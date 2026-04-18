@@ -1,4 +1,4 @@
-from . import tk
+import tkinter as tk
 
 class Tk(tk.Tk):
 

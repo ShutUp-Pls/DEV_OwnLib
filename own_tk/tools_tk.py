@@ -1,4 +1,5 @@
-from . import tk, Callable
+import tkinter as tk
+from typing import Callable
 
 class Tools:
 

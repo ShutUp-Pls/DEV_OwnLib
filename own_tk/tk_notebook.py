@@ -1,8 +1,7 @@
-from . import ttk, tk
+import tkinter as tk
+from tkinter import ttk
 
 class Notebook(ttk.Notebook):
 
     def __init__(self, master:tk.Tk|tk.Toplevel|tk.Frame|tk.Canvas=None, **kwargs):
-        
-
         super().__init__(master, **kwargs)

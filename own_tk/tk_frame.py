@@ -1,4 +1,4 @@
-from . import tk
+import tkinter as tk
 
 class Frame(tk.Frame):
 

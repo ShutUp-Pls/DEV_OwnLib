@@ -1,4 +1,5 @@
-from . import tk, Tools
+import tkinter as tk
+from .tools_tk import Tools
 
 class ScrollableFrame(tk.Frame):
 
