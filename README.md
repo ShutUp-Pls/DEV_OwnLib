@@ -1,16 +1,18 @@
-# ownTK
+# OwnLin
 
----
+Librería colección de reutilizaciones para el desarrollo en python.
 
-## Descripción
-Esta librería es una colección de componentes personalizados para el framework Tkinter, diseñados bajo el principio de reutilización de código y herencia de clases. El objetivo principal es estandarizar la interfaz de usuario en múltiples proyectos, encapsulando comportamientos comunes y extendiendo las capacidades de los widgets nativos de Python.
+## 1) ownTk
 
-## Características Técnicas
+### Descripción
+Este modulo es una colección de componentes personalizados para el framework Tkinter, diseñados bajo el principio de reutilización de código y herencia de clases. El objetivo principal es estandarizar la interfaz de usuario en múltiples proyectos, encapsulando comportamientos comunes y extendiendo las capacidades de los widgets nativos de Python.
+
+### Características Técnicas
 * **Arquitectura basada en Clases:** Todos los widgets heredan de `tk.Frame` o widgets específicos, permitiendo una integración transparente como componentes independientes.
 * **Encapsulamiento:** Lógica de eventos y estilos configurada internamente para mantener el código del proyecto principal limpio.
 * **Extensibilidad:** Los componentes aceptan `*args` y `**kwargs` para mantener compatibilidad total con las opciones estándar de Tkinter.
 
-## Estructura del Proyecto
+### Estructura del Proyecto
 ```text
 DEV_OwnLib/
 ├── ownTk/                 # Paquete principal
@@ -26,7 +28,7 @@ DEV_OwnLib/
 └── README.md
 ```
 
-## Instalación
+### Instalación
 
 Para utilizar esta librería en sus proyectos de desarrollo, puede instalarla directamente desde este repositorio de GitHub utilizando `pip`:
 
@@ -34,7 +36,7 @@ Para utilizar esta librería en sus proyectos de desarrollo, puede instalarla di
 pip install git+https://github.com/ShutUp-Pls/DEV_OwnLib
 ```
 
-## Ejemplo de Uso
+### Ejemplo de Uso
 
 A continuación se muestra cómo integrar un widget de esta librería en una aplicación estándar de Tkinter:
 
