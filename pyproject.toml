@@ -8,7 +8,7 @@ version = "0.1.0"
 authors = [
   { name="Marco Delgado", email="marcodelgado.1008@gmail.com" },
 ]
-description = "Una colección de widgets personalizados y extensiones para Tkinter"
+description = "Una colección de herramientas, widgets personalizados para Tkinter y utilidades para PostgreSQL."
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
@@ -22,4 +22,4 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = ["ownTk"]
+packages = ["ownTk", "ownPg"]

@@ -60,5 +60,50 @@ if __name__ == "__main__":
     app = Aplicacion()
     app.mainloop()
 ```
+
+## 2) ownPg
+
+### Descripción
+Al igual que su contraparte visual, este módulo está diseñado para estandarizar y simplificar la interacción con bases de datos PostgreSQL utilizando `psycopg2`. Encapsula la gestión de conexiones, cursores y el manejo de excepciones, permitiendo mantener la lógica de base de datos de tus proyectos limpia, reutilizable y tolerante a fallos.
+
+### Características Técnicas
+* **Gestión de Estado Interno:** Administra automáticamente el ciclo de vida del cursor y la conexión, extrayendo metadatos dinámicos como las bases de datos y tablas disponibles al momento de conectarse.
+* **Verbosidad Configurable:** Permite derivar las alertas y errores de conexión de forma silenciosa, hacia la consola, o mediante ventanas emergentes (`tkinter.messagebox`), sin necesidad de ensuciar el código principal con bloques `try-except`.
+* **Separación de Responsabilidades:** Utiliza el mismo patrón arquitectónico de `ownTk`, separando las propiedades (`Props`) de los métodos de ejecución para una alta legibilidad del código.
+
+### Ejemplo de Uso
+
+A continuación se muestra cómo gestionar una conexión a PostgreSQL usando el objeto estandarizado:
+
+```python
+import ownPg as pg
+
+# Instanciamos el administrador de conexión
+db = pg.Conexion()
+
+# Configuramos la verbosidad: (imprimir en consola, NO mostrar popup en GUI)
+db.verbose = (True, False)
+
+# Establecemos la conexión usando el setter (acepta un diccionario de credenciales)
+db.conexion = {
+    "host": "localhost",
+    "user": "postgres",
+    "password": "mi_password_seguro",
+    "port": "5432"
+}
+
+# Verificamos que la conexión esté activa
+if db.conexion:
+    print("Bases de datos disponibles:", db.databases)
+    
+    # Al asignar la base de datos, automáticamente refresca las tablas disponibles
+    db.database = "mi_proyecto_db"
+    print("Tablas en la BD:", db.tablas)
+
+# Limpieza segura de cursores y cierre de conexión
+db.desconectarse()
+
+```
+
 ## Autor
 * **Marco Delgado**
